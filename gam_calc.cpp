@@ -36,7 +36,7 @@ void print_table(bool gene_A[MAXARR], bool gene_B[MAXARR], int samples){
             }
         }
     }
-    std::cout <<" \t" << "+"  << " \t " << "-"  << std::endl
+    std::cerr <<" \t" << "+"  << " \t " << "-"  << std::endl
          <<"+\t" << n_AB << " \t " << n_Ab << std::endl
          <<"-\t" << n_aB << " \t " << n_ab << std::endl;
 
@@ -65,42 +65,76 @@ float gammitic_disequalibrium(bool gene_A[MAXARR],  bool gene_B[MAXARR], int sam
     return (p_AB - (p_A * p_B));
 }
 
-int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , double  D_stat,  std::string * path_to_log){
+int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_to_log , out_data * report){
     int i ;
-    double p_num = 0.0 ,p_value = 0.0;
-    srand(time_t(NULL));
+    double p_num = 0.0 ;
+    float D_loop = 0.0;
+    std::ofstream perm_log;
+    bool logging = false;
+    if(path_to_log != ""){
+        perm_log.open( path_to_log + ".permutation.csv");
+        logging = true;
+    }
     for (i = 0; i < RESAMPLES ; ++i) { // do the resampling for the permutation
         std::random_shuffle(&B[0],&B[max]);
-        if (abs(gammitic_disequalibrium(A,B,max)) > abs(D_stat)){
+        D_loop = gammitic_disequalibrium(A,B,max);
+        if (abs(D_loop) > abs(report->D_stat)){
             p_num++;
         }
-        p_value = p_num / (double) i;
+        if(logging){
+            perm_log << D_loop << std::endl;
+        }
     }
-    std::cout << p_value <<  "\t" << D_stat << "\t" << max << std::endl;
+    report->p_value = (float) (p_num / (double) i);
+    if(DBUG || !(logging)) {
+        std::cerr << report->p_value << "\t" << report->D_stat << "\t" << max << std::endl;
+    }
+    if(logging){
+        perm_log.close();
+    }
     return 0;
 }
 
-int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string * path_to_log ){
-    float resampled_disequalibriums[BOOT] = {};
+int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string path_to_log ,out_data * report){
+    static float resampled_disequalibriums[RESAMPLES] = {};
     int index ;
     bool A_loop[MAXARR] = {};
     bool B_loop[MAXARR] = {};
-    std::cerr << "declared everything\n";
-    for (int i = 0; i < BOOT ; ++i) {
+    bool logging = false;
+    float lower = 0.0 , upper = 0.0;
+    std::ofstream boot_log ;
+    if(path_to_log != ""){ // see if we want to log the alt distrabution
+        boot_log.open(path_to_log + ".bootstrap.csv");
+        logging = true;
+    }
+    for (int i = 0; i < RESAMPLES ; ++i) {
         for (int j = 0; j < max; ++j) {     // fill the loop arrays with randome tuples from A and B
             index = ((int) random() % max);
             A_loop[j] = A[index];
             B_loop[j] = B[index];
         }
         resampled_disequalibriums[i] = gammitic_disequalibrium(A_loop,B_loop,max); // fill the alt distrabution
+        if(logging){
+            boot_log << resampled_disequalibriums[i] << std::endl; // add the values
+        }
     }
-    std::sort(&resampled_disequalibriums[0],&resampled_disequalibriums[BOOT]);
-    std::cout << "Lower-Bound= " << resampled_disequalibriums[(int)((alpha/2)*BOOT)] << "\t"
-              << "Upper-Bound= " << resampled_disequalibriums[(int)((1-(alpha/2))*BOOT)] << std::endl;
+    std::sort(&resampled_disequalibriums[0],&resampled_disequalibriums[RESAMPLES]);
+    lower = resampled_disequalibriums[(int) ((alpha / 2) * RESAMPLES)];
+    upper = resampled_disequalibriums[(int) ((1 - (alpha / 2)) * RESAMPLES)];
+    if(DBUG || !(logging)) {     // see if we should print to screen if so, do
+        std::cerr << "Lower-Bound= " << lower << "\t"
+                  << "Upper-Bound= " << upper << std::endl;
+    }
+    if(logging){
+        boot_log.close();
+    }
+    report->LB = lower;
+    report->UB = upper;
     return 0;
 }
 
-int get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num , float * alpha,std::string path_to_log){
+out_data get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num , float * alpha , std::string path_to_log){
+    out_data pair_vals ;
     bool A[MAXARR] = {};
     bool B[MAXARR] = {};
     int num = 0;
@@ -108,19 +142,20 @@ int get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num , float * alpha
     bool * B_p = &B[0];
     int  * num_p = &num ;
     int i ;
-    double test_stat = 0.0 , p_num = 0.0 ,p_value = 0.0;
 
     cleaning_func(a_raw,b_raw,init_num, A_p, B_p , num_p);
-    test_stat = gammitic_disequalibrium(A,B,num);
+    pair_vals.D_stat = gammitic_disequalibrium(A,B,num);
     print_table(A,B,num); // prints grapphical table of data
     srand(time_t(NULL));
-    boot_strap(A, B, num, 0.05 , &path_to_log); // do bootstrap
-    permutation_test(A, B, num, test_stat, &path_to_log); // do permutation test
-    return 0;
+    boot_strap(A, B, num, 0.05 , path_to_log , &pair_vals); // do bootstrap
+    permutation_test(A, B, num , path_to_log , &pair_vals); // do permutation test
+    pair_vals.reject = (pair_vals.p_value < *alpha);
+    return pair_vals;
 }
 
 int main(){
     // test values
+    out_data values[1] ;
     float alpha = 0.05;
     int a_raw[256] = {1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -135,9 +170,9 @@ int main(){
                       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                       0,0,0,0,0,0,0,0,0,0,0};
     int init_num = 20;
-    if(get_stats(a_raw,b_raw,init_num,&alpha,"") != 0 ) {
-        std::cerr << "Permutation test failed\n";
-    }
+    values[0].names = "alpha-beta";
+    values[0] = get_stats(a_raw,b_raw,init_num,&alpha,"testing");
+
     return 0;
 }
 

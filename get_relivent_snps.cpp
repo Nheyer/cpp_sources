@@ -188,21 +188,6 @@ int write_vals(std::string path, char* samp[MAXARR], int positions[MAXARR], int 
 }
 
 
-void cleaning_func(int arr1[MAXARR], int arr2[MAXARR], int insamp, bool * clean_arr1[MAXARR], bool * clean_arr2[MAXARR], int * out_n){
-    int j = 0;
-    for (int i = 0; i < insamp ; ++i) {
-        if(arr1[i] == 0 || arr2[i] == 0) {
-            *out_n = (*out_n) - 1;
-            continue ;
-        } else {
-            *clean_arr1[j] = ( arr1[i] == 1 );
-            *clean_arr2[j] = ( arr2[i] == 1 );
-            j++;
-        }
-    }
-    * out_n = j;
-}
-
 
 // function to calculate the disequalibriam coefficient
 float gammitic_disequalibrium(bool gene_A[MAXARR],  bool gene_B[MAXARR], int samples ){

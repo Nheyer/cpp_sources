@@ -4,7 +4,7 @@
 
 #ifndef RECEARCH_GET_RELIVENT_SNPS_H
 #define RECEARCH_GET_RELIVENT_SNPS_H
-#define DBUG false
+#define DBUG true
 #define DBUG_V false
 #define MAXARR 256
 #define RESAMPLES 10000000
@@ -34,9 +34,12 @@ struct user_arguments{
     std::string var_fmt_flag = "AO";
 
 };
-
-std::string get_contig(user_arguments * st){
-    return st->contig;
-}
-
+struct out_data{
+    std::string names   = "";
+    float       LB      = 0.0;
+    double      D_stat  = 0.0;
+    float       UB      = 0.0;
+    float       p_value = 0.0;
+    bool        reject  = false;
+};
 #endif //RECEARCH_GET_RELIVENT_SNPS_H
