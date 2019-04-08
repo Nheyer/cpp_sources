@@ -3,7 +3,6 @@
 //
 #include "get_relivent_snps.h"
 
-
 void cleaning_func(int arr1[MAXARR], int arr2[MAXARR], int insamp, bool * clean_arr1, bool * clean_arr2, int * out_n){
     int j = 0;
     for (int i = 0; i < insamp ; ++i) {
@@ -147,15 +146,31 @@ out_data get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num , float * 
     pair_vals.D_stat = gammitic_disequalibrium(A,B,num);
     print_table(A,B,num); // prints grapphical table of data
     srand(time_t(NULL));
-    boot_strap(A, B, num, 0.05 , path_to_log , &pair_vals); // do bootstrap
+    boot_strap(A, B, num, * alpha , path_to_log , &pair_vals); // do bootstrap
     permutation_test(A, B, num , path_to_log , &pair_vals); // do permutation test
     pair_vals.reject = (pair_vals.p_value < *alpha);
     return pair_vals;
 }
-
+int write_values(out_data data[MAXARR], int max, std::string out_path){
+    std::ofstream pairwise_data;
+    pairwise_data.open("outs/" + out_path + ".summary.tsv");
+    pairwise_data << "Pairing \t Lower_Bound \t Upper_Bound \t Sample_Disequilibrium \t p-value \t Decision";
+    for (int i = 0; i < max ; ++i) { // loop through all values and print them
+        pairwise_data << std::endl
+                      << data[i].names   << "\t"
+                      << data[i].LB      << "\t"
+                      << data[i].UB      << "\t"
+                      << data[i].D_stat  << "\t"
+                      << data[i].p_value << "\t"
+                      << data[i].reject;
+    }
+    pairwise_data.close();
+    return 0;
+}
 int main(){
     // test values
-    out_data values[1] ;
+    out_data values[MAXARR];
+    int values_filled = 0;
     float alpha = 0.05;
     int a_raw[256] = {1,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -172,7 +187,8 @@ int main(){
     int init_num = 20;
     values[0].names = "alpha-beta";
     values[0] = get_stats(a_raw,b_raw,init_num,&alpha,"testing");
-
+    values_filled++ ;
+    write_values(&values[0], values_filled , "Testing");
     return 0;
 }
 
