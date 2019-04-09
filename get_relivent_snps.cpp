@@ -414,7 +414,7 @@ int main(int argc, char ** argv){
     data_used = dementions[1];
     do{
         if(!(first_run)) {
-            for (int i = ((ps_last_started - ps_running) - 1); i < ps_running; ++i) {
+            for (int i = ((ps_last_started - ps_running)); i < ps_last_started; ++i) {
                 if (data[i].state == "done") {
                     if (DBUG) { std::cerr << data[i].names << " is DONE!!!" << std::endl; }
                     data[i].names = std::to_string(chr_positions[target_index])
@@ -426,12 +426,15 @@ int main(int argc, char ** argv){
                 } else if (data[i].state == "running") {
                     if (DBUG) { std::cerr << data[i].names << "is still running!!!" << std::endl; }
                     break; // the first running process was found , break here
+                } else{
+                    // you should not get here...
+                    return -1;
                 }
             }
         } else {
             first_run = false;
         }
-        if(DBUG){std::cerr << "Data_used:\t"         << data_used
+        if(DBUG_V){std::cerr << "Data_used:\t"         << data_used
                            << "\nps_running:\t"      << ps_running
                            << "\nps_last_started:\t" << ps_last_started
                            << "\nps_done:\t"         << ps_done << std::endl;}
@@ -441,6 +444,13 @@ int main(int argc, char ** argv){
             std::cerr <<  "all processes done, but still have threads running....\n";
         }
         if(ps_running < arguments.threads && ps_last_started < data_used && ps_last_started != target_index){
+            if(DBUG){
+                std::cerr << "Kicking off \t"
+                          << std::to_string(chr_positions[target_index])
+                             + "-vs-"
+                             + std::to_string(chr_positions[ps_last_started])
+                          << std::endl   ;
+            }
             data[ps_last_started].state = "running";
             data[ps_last_started] = get_stats(tsv_array[target_index],
                                               tsv_array[ps_last_started],
@@ -464,7 +474,7 @@ int main(int argc, char ** argv){
             ps_last_started++;
             ps_done++;
         }
-    } while (sleep(20) == 0);
+    } while (sleep(5) == 0);
     write_values(&data[0],data_used,arguments.outpath);
 
     return 0;
