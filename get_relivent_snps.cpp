@@ -6,59 +6,6 @@
 #include "get_relivent_snps.h"
 
 
-user_arguments parse(int Arglength, char ** ArgComands ){
-    int i = 1;
-    int middle = 0, range = 0;
-    user_arguments save;
-
-    while (i < Arglength) {
-        std::string arg_i = (std::string) ArgComands[i];
-        if (arg_i == "-i") {
-            save.bcf_idpt = i + 1;
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-t") {
-            save.target = std::stoi(ArgComands[i + 1]);
-            middle = std::stoi(ArgComands[i + 1]);
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-r") {
-            range = std::stoi(ArgComands[i + 1]);
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-@") {
-            save.threads = std::stoi(ArgComands[i + 1]);
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-c"){
-            save.contig = (std::string)ArgComands[i + 1];
-            i += 2; // skip one b/c we used it here.
-        }else if (arg_i == "-o"){
-            save.outpath = (std::string)(ArgComands[i + 1]);
-            i += 2; // skip one b/c we used it here.
-        }else if (arg_i == "-R") {
-            save.ref_fmt_flag = ArgComands[i + 1];
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-V"){
-            save.var_fmt_flag = ArgComands[i + 1];
-            i += 2; // skip one b/c we used it here.
-        } else if (arg_i == "-n"){
-            save.min_not_null = std::stoi(ArgComands[i + 1]);
-            i += 2; // skip one b/c we used it here.
-        }else {
-                std::cerr << "Unexpected Input:\t" << arg_i << std::endl;
-                i++;
-            }
-        }
-
-    if(middle < range){
-        std::cerr << "Range is greater then the mid point! . . . . .\n Setting start to zero instead\n";
-        save.StartptEndpt[0] = 0;
-    } else {
-        save.StartptEndpt[0] = middle - (range / 2);
-    }
-    save.StartptEndpt[1] = middle + (range / 2);
-
-
-    return save;
-};
-
 int  get_int_type_fmt(bcf1_t * data, std::string tag , bcf_idpair_t *pair_of_vals ,int nsamp, int * ints){
     int j = 0, tag_id ;
     if(DBUG_V){std::cerr << "nsamp has a value of : \t" << nsamp << std::endl;}
@@ -323,30 +270,32 @@ int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string
     return 0;
 }
 
-out_data get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num , float * alpha , std::string path_to_log , std::string name){
-    out_data pair_vals ;
+int  get_stats(int a_raw[MAXARR],
+               int b_raw[MAXARR],
+               int init_num ,
+               float * alpha,
+               std::string path_to_log,
+               int index_to_fill){
     bool A[MAXARR] = {};
     bool B[MAXARR] = {};
     int num = 0;
     bool * A_p = &A[0];
     bool * B_p = &B[0];
     int  * num_p = &num ;
-    int i ;
 
     cleaning_func(a_raw,b_raw,init_num, A_p, B_p , num_p);
-    pair_vals.D_stat = gammitic_disequalibrium(A,B,num);
+    DATA[index_to_fill].D_stat = gammitic_disequalibrium(A,B,num);
     print_table(A,B,num); // prints grapphical table of data
     srand(time_t(NULL));
-    boot_strap(A, B, num, * alpha , path_to_log  + "/logs/" + name, &pair_vals); // do bootstrap
-    permutation_test(A, B, num , path_to_log + "/logs/" + name, &pair_vals); // do permutation test
-    pair_vals.reject = (pair_vals.p_value < *alpha);
-    pair_vals.state = "done";
-    pair_vals.names = name;
-    return pair_vals;
+    boot_strap(A, B, num, * alpha , path_to_log  + "/logs/" + DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
+    permutation_test(A, B, num , path_to_log + "/logs/" + DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
+    DATA[index_to_fill].reject = (DATA[index_to_fill].p_value < *alpha);
+    DATA[index_to_fill].state = "done";
+    return 0;
 }
-int write_values(out_data data[MAXARR], int max, std::string out_path){
+int write_values(out_data data[MAXARR], int max, std::string & out_path){
     std::ofstream pairwise_data;
-    pairwise_data.open("outs/" + out_path + ".summary.tsv");
+    pairwise_data.open("./outs/" + out_path + ".summary.tsv");
     pairwise_data << "Pairing \t Lower_Bound \t Upper_Bound \t Sample_Disequilibrium \t p-value \t Decision";
     for (int i = 0; i < max ; ++i) { // loop through all values and print them
         pairwise_data << std::endl
@@ -362,22 +311,27 @@ int write_values(out_data data[MAXARR], int max, std::string out_path){
 }
 
 
+void *child_ps(void* in_vals) {     //(int Alpha[MAXARR], int Beta[MAXARR], int num , user_arguments & args, out_data * return_vals){
+    auto vals_cast = (ham_fisted * ) in_vals;
+    get_stats(vals_cast->A,vals_cast->B,vals_cast->num,&(vals_cast->arg.alpha),vals_cast->arg.log_path,vals_cast->data_index);
+    pthread_exit(NULL);
+}
 int main(int argc, char ** argv){
     // declare variables
-    out_data data[MAXARR];
-    user_arguments arguments;
-    htsFile *   input_vcf = NULL ; // can also be an indexed bcf
-    bcf_hdr_t * input_vcf_hdr = NULL ; // just the header
-    int         tsv_array[MAXARR][MAXARR] = {};
-    int         chr_positions[MAXARR] = {};
-    int         dementions[2] = {};
-    int  *      chr_positions_p = &chr_positions[0];
-    int  *      tsv_arr_p = &tsv_array[0][0]; // pointer to a MAXARR by MAXARR array of ints
-    int  *      dementions_p[2] = {&dementions[0],&dementions[1]};
-    char * *    head_line[MAXARR] = {};
-    int         grid_flag = -1, data_used = 0 , ps_running = 0 ;
-    int         ps_done = 0, ps_last_started = 0 , target_index = 0;
-    bool        first_run = true;
+    user_arguments  arguments;
+    htsFile *       input_vcf = NULL ; // can also be an indexed bcf
+    bcf_hdr_t *     input_vcf_hdr = NULL ; // just the header
+    int             tsv_array[MAXARR][MAXARR] = {};
+    int             chr_positions[MAXARR] = {};
+    int             dementions[2] = {};
+    int  *          chr_positions_p = &chr_positions[0];
+    int  *          tsv_arr_p = &tsv_array[0][0]; // pointer to a MAXARR by MAXARR array of ints
+    int  *          dementions_p[2] = {&dementions[0],&dementions[1]};
+    char * *        head_line[MAXARR] = {};
+    int             grid_flag = -1, data_used = 0 , ps_running = 0 ;
+    int             ps_done = 0, ps_last_started = 0 , target_index = 0;
+    unsigned int    ps_wait = WAIT_PS;
+    bool            first_run = true;
 
     //start program
     arguments = parse(argc , argv);
@@ -410,31 +364,40 @@ int main(int argc, char ** argv){
     target_index = write_vals( &arguments, *head_line,chr_positions,tsv_array,dementions); // writhe the data to the file!!!
     bcf_hdr_destroy(input_vcf_hdr);
     bcf_close(input_vcf);
-    /// todo  turn this into its own function [DRY]
+
     data_used = dementions[1];
     do{
         if(!(first_run)) {
             for (int i = ((ps_last_started - ps_running)); i < ps_last_started; ++i) {
-                if (data[i].state == "done") {
-                    if (DBUG) { std::cerr << data[i].names << " is DONE!!!" << std::endl; }
-                    data[i].names = std::to_string(chr_positions[target_index])
-                                    + "-vs-"
-                                    + std::to_string(chr_positions[i]);
+                if (DATA[i].state == "done") {
+                    if(!(DATA[i].names == "self")){ // if it is not the one that didn't really run, we need to free some space
+                        DATA[i].names = std::to_string(chr_positions[target_index])+"-vs-"+ std::to_string(chr_positions[i]);
+                    }
+                    if (DBUG) { std::cerr << DATA[i].names << " is DONE!!!" << std::endl; }
+                    ps_wait = WAIT_PS;
                     ps_done++;
                     ps_running--;
 
-                } else if (data[i].state == "running") {
-                    if (DBUG) { std::cerr << data[i].names << "is still running!!!" << std::endl; }
+                } else if (DATA[i].state == "running") {
+                    if(DBUG_V){
+                        std::cerr << "Prossess causing us to brake is:\n"
+                                  << DATA[i].names << std::endl
+                                  << "With a lower bound:\t" << DATA[i].LB << std::endl
+                                  << "A D-stat of:\t" << DATA[i].D_stat << std::endl
+                                  << "An upper bound:\t" << DATA[i].UB << std::endl
+                                  << "and p-value of:\t" << DATA[i].p_value << std::endl;
+                    }else if (DBUG) { std::cerr << DATA[i].names << " is still running!!!" << std::endl;}
+                    ps_wait += 1;
                     break; // the first running process was found , break here
                 } else{
-                    // you should not get here...
+                    // you should not get here... so if you do, exit hard
                     return -1;
                 }
             }
         } else {
             first_run = false;
         }
-        if(DBUG_V){std::cerr << "Data_used:\t"         << data_used
+        if(DBUG_VV){std::cerr << "Data_used:\t"         << data_used
                            << "\nps_running:\t"      << ps_running
                            << "\nps_last_started:\t" << ps_last_started
                            << "\nps_done:\t"         << ps_done << std::endl;}
@@ -444,38 +407,31 @@ int main(int argc, char ** argv){
             std::cerr <<  "all processes done, but still have threads running....\n";
         }
         if(ps_running < arguments.threads && ps_last_started < data_used && ps_last_started != target_index){
-            if(DBUG){
-                std::cerr << "Kicking off \t"
-                          << std::to_string(chr_positions[target_index])
-                             + "-vs-"
-                             + std::to_string(chr_positions[ps_last_started])
-                          << std::endl   ;
-            }
-            data[ps_last_started].state = "running";
-            data[ps_last_started] = get_stats(tsv_array[target_index],
-                                              tsv_array[ps_last_started],
-                                              dementions[0],
-                                              &arguments.alpha,
-                                              arguments.log_path,
-                                              std::to_string(chr_positions[target_index])
-                                              + "-vs-"
-                                              + std::to_string(chr_positions[ps_last_started]));
+            if(DBUG){std::cerr << "Kicking off \t" << std::to_string(chr_positions[target_index]) + "-vs-" + std::to_string(chr_positions[ps_last_started])<< std::endl;}
+            DATA[ps_last_started].state = "running";
+            DATA[ps_last_started].ptid = ps_last_started;
+            DATA[ps_last_started].names = std::to_string(chr_positions[target_index]) + "-vs-" + std::to_string(chr_positions[ps_last_started]);
+            // start the child process and add one to the number of prosesses running.
+            ham_fisted in_vals = ham_fill(tsv_array[target_index], tsv_array[ps_last_started], dementions[0], arguments, ps_last_started);
+            if (pthread_create(&(DATA[ps_last_started].ps), nullptr, child_ps,(void *) &in_vals) == 0){
+                std::cout << "launched thread with tid:\t" << DATA[ps_last_started].ptid << std::endl;
+            };
+            ps_wait = WAIT_PS;
             ps_last_started++;
             ps_running++;
-            if(DBUG){std::cerr << data[ps_last_started].state << std::endl;}
         } else if (ps_last_started == target_index){
             if(DBUG){std::cerr << "Don't run vs yourself....\n";}
-            data[ps_last_started].names = "self";
-            data[ps_last_started].state = "done";
-            data[ps_last_started].p_value = 0.0;
-            data[ps_last_started].D_stat = 0;
-            data[ps_last_started].UB = 0.0;
-            data[ps_last_started].LB = 0.0;
+            DATA[ps_last_started].names = "self";
+            DATA[ps_last_started].state = "done";
+            DATA[ps_last_started].p_value = 0.0;
+            DATA[ps_last_started].D_stat = 0;
+            DATA[ps_last_started].UB = 0.0;
+            DATA[ps_last_started].LB = 0.0;
             ps_last_started++;
-            ps_done++;
+            ps_running++;
         }
-    } while (sleep(5) == 0);
-    write_values(&data[0],data_used,arguments.outpath);
+    } while (sleep(ps_wait) == 0);
+    write_values(&DATA[0],data_used,arguments.outpath);
 
     return 0;
 }
