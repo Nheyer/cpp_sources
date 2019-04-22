@@ -107,15 +107,15 @@ struct out_data{
     pthread_t   ps;
     int         ptid    = -1;
 };
-struct ham_fisted{
+struct PS_Data{
     int A[MAXARR] = {};
     int B[MAXARR] = {};
     int num = 0;
     user_arguments arg;
     int data_index = -1;
 };
-ham_fisted ham_fill(int  A[MAXARR], int B[MAXARR], int num, user_arguments & arg, int data_p){
-    ham_fisted rt;
+PS_Data ps_fill(int *A, int *B, int num, user_arguments &arg, int data_p){
+    PS_Data rt;
     rt.num = num;
     rt.arg = arg;
     rt.data_index = data_p;

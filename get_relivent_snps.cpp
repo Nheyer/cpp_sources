@@ -311,8 +311,8 @@ int write_values(out_data data[MAXARR], int max, std::string & out_path){
 }
 
 
-void *child_ps(void* in_vals) {     //(int Alpha[MAXARR], int Beta[MAXARR], int num , user_arguments & args, out_data * return_vals){
-    auto vals_cast = (ham_fisted * ) in_vals;
+void *child_ps(void* in_vals) {     // (int Alpha[MAXARR], int Beta[MAXARR], int num , user_arguments & args, out_data * return_vals){
+    auto vals_cast = (PS_Data * ) in_vals;
     get_stats(vals_cast->A,vals_cast->B,vals_cast->num,&(vals_cast->arg.alpha),vals_cast->arg.log_path,vals_cast->data_index);
     pthread_exit(NULL);
 }
@@ -412,7 +412,8 @@ int main(int argc, char ** argv){
             DATA[ps_last_started].ptid = ps_last_started;
             DATA[ps_last_started].names = std::to_string(chr_positions[target_index]) + "-vs-" + std::to_string(chr_positions[ps_last_started]);
             // start the child process and add one to the number of prosesses running.
-            ham_fisted in_vals = ham_fill(tsv_array[target_index], tsv_array[ps_last_started], dementions[0], arguments, ps_last_started);
+            PS_Data in_vals = ps_fill(tsv_array[target_index], tsv_array[ps_last_started], dementions[0], arguments,
+                                         ps_last_started);
             if (pthread_create(&(DATA[ps_last_started].ps), nullptr, child_ps,(void *) &in_vals) == 0){
                 std::cout << "launched thread with tid:\t" << DATA[ps_last_started].ptid << std::endl;
             };
