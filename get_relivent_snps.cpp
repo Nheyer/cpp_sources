@@ -31,6 +31,50 @@ int  get_int_type_fmt(bcf1_t * data, std::string tag , bcf_idpair_t *pair_of_val
     return 0;
 }
 
+int Bonferroni(int m, float alpha){
+    float cor_alpha = alpha/(m-1); // alpha under Bonferroni SFER
+    for (int i = 0; i < m; ++i) {
+        if (DATA[i].names != "self"){
+            DATA[i].reject = (DATA[i].p_value < cor_alpha);
+        }
+    }
+    return 0;
+}
+
+int Holm_Bonferroni(int m , float alpha){
+    std::vector <out_data> temp_hold;
+    std::vector < std::pair <float , int > > Pval_Index;
+    temp_hold.resize(m);
+    Pval_Index.resize(m);
+    int k = 0 , true_m, rt_val = 0;
+    for(int i = 0; i < m; i++){
+        Pval_Index[i] = (std::make_pair(DATA[i].p_value,i));
+        temp_hold[i] = DATA[i];
+    }
+    std::sort(Pval_Index.begin(),Pval_Index.end());
+    if((temp_hold[Pval_Index[0].second].names !="self")){
+        std::cerr << "Somthing funky happened, the lowest p value is not the comparison agenst itself...\n"
+                  << "going to include all \"comparisons\" including potentioly self\n";
+        rt_val = -1;
+    } else {
+        k = 1; //skip index 0
+    }
+    for (int j = 0; j < m ; ++j) {
+        DATA[j] = temp_hold[Pval_Index[j].second];
+        if (k == 0){
+            DATA[j].reject = (DATA[j].p_value < (alpha)/(m + 1 - j));
+        }else if(k == 1 && j > 0){
+            DATA[j].reject = (DATA[j].p_value < (alpha)/(m - j));
+        }
+    }
+    return rt_val;
+}
+
+int do_corection(int correction_type,int num_tests,float alpha){
+    if(correction_type == 0){ return Bonferroni(num_tests,alpha);}
+    else if (correction_type == 1) { return Holm_Bonferroni(num_tests,alpha);}
+    else { return  -9;}
+}
 
 int mk_grid(htsFile * bcf, bcf_hdr_t * hdr,user_arguments * args, int * poss, int * arr, char ** header[MAXARR], int * dem[2]){
     // initialise the data
@@ -329,7 +373,7 @@ int main(int argc, char ** argv){
     int  *          dementions_p[2] = {&dementions[0],&dementions[1]};
     char * *        head_line[MAXARR] = {};
     int             grid_flag = -1, data_used = 0 , ps_running = 0 ;
-    int             ps_done = 0, ps_last_started = 0 , target_index = 0;
+    int             ps_done = 0, ps_last_started = 0 , target_index = 0 , test_errors = 0;
     unsigned int    ps_wait = WAIT_PS;
     bool            first_run = true;
 
@@ -432,6 +476,8 @@ int main(int argc, char ** argv){
             ps_running++;
         }
     } while (sleep(ps_wait) == 0);
+    ///todo report errors
+    test_errors = do_corection(arguments.FWEC,data_used,arguments.alpha);
     write_values(&DATA[0],data_used,arguments.outpath);
 
     return 0;
