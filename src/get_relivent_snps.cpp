@@ -70,7 +70,7 @@ int Holm_Bonferroni(int m , float alpha){
     return rt_val;
 }
 
-int do_corection(int correction_type,int num_tests,float alpha){
+int do_correction(int correction_type,int num_tests,float alpha){
     if(correction_type == 0){ return Bonferroni(num_tests,alpha);}
     else if (correction_type == 1) { return Holm_Bonferroni(num_tests,alpha);}
     else { return  -9;}
@@ -393,6 +393,7 @@ int main(int argc, char ** argv){
 
     grid_flag = mk_grid(input_vcf,input_vcf_hdr, & arguments, chr_positions_p , tsv_arr_p, head_line, dementions_p);
     // cheack for errors in the above functinon
+    /// throw into funk
     if ( grid_flag == 0){
         std::cout << "Finished analyzing VCF starting to write\n";
     } else if (grid_flag == -1){
@@ -422,7 +423,7 @@ int main(int argc, char ** argv){
                     ps_done++;
                     ps_running--;
 
-                } else if (DATA[i].state == "running") {
+                } else if (DATA[i].state == "running" ) {
                     if(DBUG_V){
                         std::cerr << "Prossess causing us to brake is:\n"
                                   << DATA[i].names << std::endl
@@ -477,7 +478,7 @@ int main(int argc, char ** argv){
         }
     } while (sleep(ps_wait) == 0);
     ///todo report errors
-    test_errors = do_corection(arguments.FWEC,data_used,arguments.alpha);
+    test_errors = do_correction(arguments.FWEC,data_used,arguments.alpha);
     write_values(&DATA[0],data_used,arguments.outpath);
 
     return 0;
