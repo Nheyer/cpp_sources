@@ -1,0 +1,96 @@
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  "C"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_C
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/bcf_sr_sort.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/bcf_sr_sort.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/bgzf.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/bgzf.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/bgzip.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/bgzip.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_codecs.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_codecs.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_decode.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_decode.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_encode.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_encode.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_external.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_external.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_index.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_index.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_io.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_io.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_samtools.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_samtools.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/cram_stats.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/cram_stats.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/files.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/files.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/mFILE.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/mFILE.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/open_trace_file.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/open_trace_file.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/pooled_alloc.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/pooled_alloc.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/rANS_static.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/rANS_static.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/sam_header.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/sam_header.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/cram/string_alloc.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/cram/string_alloc.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/errmod.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/errmod.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/faidx.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/faidx.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hfile.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hfile.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hfile_gcs.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hfile_gcs.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hfile_libcurl.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hfile_libcurl.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hfile_net.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hfile_net.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hfile_s3.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hfile_s3.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hts.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hts.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/hts_os.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/hts_os.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/htsfile.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/htsfile.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/kfunc.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/kfunc.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/knetfile.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/knetfile.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/kstring.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/kstring.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/md5.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/md5.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/multipart.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/multipart.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/os/rand.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/os/rand.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/plugin.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/plugin.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/probaln.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/probaln.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/realn.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/realn.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/regidx.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/regidx.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/region.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/region.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/sam.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/sam.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/synced_bcf_reader.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/synced_bcf_reader.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/tabix.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/tabix.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/tbx.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/tbx.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/fieldarith.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/fieldarith.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/fuzz/hts_open_fuzzer.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/fuzz/hts_open_fuzzer.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/hfile.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/hfile.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/hts_endian.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/hts_endian.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/pileup.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/pileup.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/sam.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/sam.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test-bcf-sr.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test-bcf-sr.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test-bcf-translate.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test-bcf-translate.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test-regidx.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test-regidx.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test-vcf-api.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test-vcf-api.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test-vcf-sweep.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test-vcf-sweep.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test_bgzf.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test_bgzf.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test_index.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test_index.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test_kstring.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test_kstring.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test_realn.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test_realn.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/test_view.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/test_view.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads1.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads1.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads2.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads2.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads3.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads3.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads4.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads4.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads5.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads5.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads6.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads6.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/test/thrash_threads7.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/test/thrash_threads7.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/textutils.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/textutils.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/thread_pool.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/thread_pool.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/vcf.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/vcf.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/vcf_sweep.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/vcf_sweep.c.o"
+  "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/htslib/vcfutils.c" "/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir/vcfutils.c.o"
+  )
+set(CMAKE_C_COMPILER_ID "GNU")
+
+# The include file search paths:
+set(CMAKE_C_TARGET_INCLUDE_PATH
+  "../."
+  "../htslib/."
+  "../htslib/cram"
+  "../htslib/htslib"
+  "../htslib/os"
+  "../htslib/test"
+  )
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

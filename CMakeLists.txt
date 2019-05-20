@@ -3,11 +3,11 @@ project(Recearch)
 
 
 set(CMAKE_CXX_STANDARD 11)
-include_directories(..)
+include_directories(.)
 link_libraries(pthread)
 add_subdirectory(htslib)
+target_link_libraries(htslib)
 
-
-add_executable(Recearch src/get_relivent_snps.cpp)
+add_executable(Recearch      src/get_relivent_snps.cpp)
 
 

@@ -1,0 +1,6 @@
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/CMakeFiles/Recearch.dir
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/rebuild_cache.dir
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/htslib.dir
+/home/sheepless/CLionProjects/Recearch/getting_paired_alleiles/cmake-build-debug/htslib/CMakeFiles/edit_cache.dir

@@ -1,0 +1,1 @@
+/usr/bin/g++  -g   CMakeFiles/Recearch.dir/src/get_relivent_snps.cpp.o  -o Recearch -lpthread 
