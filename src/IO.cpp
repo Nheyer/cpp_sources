@@ -65,11 +65,3 @@ int write_values(out_data data[MAXARR], int max, std::string & out_path){
     pairwise_data.close();
     return 0;
 }
-#if DBUG_V
-void print_vect(bool v[], int len){
-    for(int i = 0 ; i < len ; i++){
-        std::cerr << v[i] << " ";
-    }
-    std::cerr << std::endl;
-}
-#endif
