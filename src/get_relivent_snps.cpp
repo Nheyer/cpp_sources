@@ -286,8 +286,8 @@ int  get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha
     cleaning_func(a_raw,b_raw,init_num, A_p, B_p , num_p);
 #if DBUG_V
     if(ARGS.debug_lvl > 1){
-       print_vec(A[], num);
-       print_vec(B[], num);
+       print_vec(A_p, num);
+       print_vec(B_p, num);
     }
 #endif
     DATA[index_to_fill].D_stat = gammitic_disequalibrium(A,B,num);
