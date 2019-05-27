@@ -6,7 +6,7 @@
 int  get_int_type_fmt(bcf1_t * data, std::string& tag , bcf_idpair_t *pair_of_vals ,int nsamp, int * ints){
     int j = 0, tag_id ;
 #if DBUG_V
-    if(args){std::cerr << "nsamp has a value of : \t" << nsamp << std::endl;}
+    if(args.debug_lvl > 1){std::cerr << "nsamp has a value of : \t" << nsamp << std::endl;}
 #endif
     if (nsamp > 256) {
         std::cerr << "Can't parse over 256 samples!\n";
