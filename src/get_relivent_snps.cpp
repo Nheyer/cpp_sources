@@ -6,7 +6,7 @@
 int  get_int_type_fmt(bcf1_t * data, std::string& tag , bcf_idpair_t *pair_of_vals ,int nsamp, int * ints){
     int j = 0, tag_id ;
 #if DBUG_V
-    if(args.debug_lvl > 1){std::cerr << "nsamp has a value of : \t" << nsamp << std::endl;}
+    if(ARGS.debug_lvl > 1){std::cerr << "nsamp has a value of : \t" << nsamp << std::endl;}
 #endif
     if (nsamp > 256) {
         std::cerr << "Can't parse over 256 samples!\n";
@@ -28,7 +28,7 @@ int  get_int_type_fmt(bcf1_t * data, std::string& tag , bcf_idpair_t *pair_of_va
     // use the id to get the list of int values for each sample (corresponding to the tag) at that pos.
     for (int i = 0; i < nsamp; i++) {
 #if DBUG_V
-        if(DBUG_V){std::cerr << ((unsigned int)(data->d.fmt[tag_id].p[i])) % 128  << "\t"; }
+        if(ARGS.debug_lvl > 1){std::cerr << ((unsigned int)(data->d.fmt[tag_id].p[i])) % 128  << "\t"; }
 #endif
         ints[i] = ((unsigned int)(data->d.fmt[tag_id].p[i])) % 128 ;
     }
@@ -144,7 +144,7 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
                 // we only want lines with at least one snp
                 if((num_not_null >= ARGS.min_not_null && snp) or (cur_conting_pos == ARGS.target )) {
 #if DBUG_V
-                    if(DBUG_V){std::cerr << "adding position " << cur_conting_pos << " and starting next row!\n";}
+                    if(ARGS.debug_lvl > 1){std::cerr << "adding position " << cur_conting_pos << " and starting next row!\n";}
 #endif
                     poss[j] = cur_conting_pos;
                     j++;
@@ -228,7 +228,7 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
         }
     }
     report->p_value = (float) (p_num / (double) RESAMPLES);
-    if(DBUG || !(logging)) {
+    if((ARGS.debug_lvl > 0) || !(logging)) {
         std::cerr << report->p_value << "\t" << report->D_stat << "\t" << max << std::endl;
     }
     if(logging){
