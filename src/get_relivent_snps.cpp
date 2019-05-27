@@ -9,6 +9,12 @@ void print_vec(bool v[], int len){
     }
     std::cerr << std::endl;
 }
+void print_vec(int v[], int len){
+    for(int i = 0 ; i < len ; i++){
+        std::cerr << v[i] << " ";
+    }
+    std::cerr << std::endl;
+}
 #endif
 int  get_int_type_fmt(bcf1_t * data, std::string& tag , bcf_idpair_t *pair_of_vals ,int nsamp, int * ints){
     int j = 0, tag_id ;
