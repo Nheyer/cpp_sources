@@ -209,7 +209,7 @@ float gammitic_disequalibrium(bool gene_A[MAXARR],  bool gene_B[MAXARR], int sam
 
 int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_to_log , out_data * report){
     int i ;
-    double p_num = 0.0 ;
+    double p_num = 0.0;
     float D_loop = 0.0;
     std::ofstream perm_log;
     bool logging = false;
@@ -287,8 +287,8 @@ int  get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha
     DATA[index_to_fill].D_stat = gammitic_disequalibrium(A,B,num);
     print_table(A,B,num); // prints grapphical table of data
     srand(time_t(NULL));
-    boot_strap(A, B, num, * alpha , path_to_log  + "/logs/" + DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
-    permutation_test(A, B, num , path_to_log + "/logs/" + DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
+    boot_strap(A, B, num, * alpha , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
+    permutation_test(A, B, num , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
     DATA[index_to_fill].reject = (DATA[index_to_fill].p_value < *alpha);
     DATA[index_to_fill].state = "done";
     return 0;
@@ -371,7 +371,7 @@ int main(int argc, char ** argv){
                     }else
 #endif
                     if (ARGS.debug_lvl > 0) { std::cerr << DATA[i].names << " is still running!!!" << std::endl;}
-                    if (ARGS.threads <= ps_running){
+                    if (ARGS.threads <= ps_running || ps_running + ps_done >= data_used){
                         pthread_join(DATA[i].ps, nullptr); // we don't have any threads, so no need to continue till we have one
                         if( DATA[i].state == "done" ){
                             ps_done++;
