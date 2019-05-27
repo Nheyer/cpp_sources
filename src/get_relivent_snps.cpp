@@ -3,7 +3,7 @@
 //
 #include "get_relivent_snps.h"
 #if DBUG_V
-void print_vect(bool v[], int len){
+void print_vec(bool v[], int len){
     for(int i = 0 ; i < len ; i++){
         std::cerr << v[i] << " ";
     }
