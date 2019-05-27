@@ -251,7 +251,7 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
 }
 
 int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string path_to_log ,out_data * report){
-    float resampled_disequalibriums[RESAMPLES] = {};
+    auto resampled_disequalibriums = (float *) malloc(RESAMPLES * sizeof(float));
     int index ;
     bool A_loop[MAXARR] = {};
     bool B_loop[MAXARR] = {};
