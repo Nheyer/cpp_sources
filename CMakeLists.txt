@@ -13,6 +13,7 @@ add_custom_command(
         )
 add_custom_target(lhts DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/htslib/libhts.a )
 add_executable(linkage src/get_relivent_snps.cpp src/get_relivent_snps.h)
+add_link_options(linkage --stack 17179869184)
 target_link_libraries(linkage ${CMAKE_CURRENT_SOURCE_DIR}/htslib/libhts.a ${CMAKE_SHARED_LINKER_FLAGS})
 add_dependencies(linkage lhts )
 
