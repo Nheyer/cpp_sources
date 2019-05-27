@@ -66,7 +66,7 @@ int write_values(out_data data[MAXARR], int max, std::string & out_path){
     return 0;
 }
 #if DBUG_V
-void print_vect(bool v[], len){
+void print_vect(bool v[], int len){
     for(int i = 0 ; i < len ; i++){
         std::cerr << v[i] << " ";
     }
