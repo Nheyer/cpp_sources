@@ -227,7 +227,7 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
             perm_log << D_loop << std::endl;
         }
     }
-    report->p_value = (float) (p_num / (double) i);
+    report->p_value = (float) (p_num / (double) RESAMPLES);
     if(DBUG || !(logging)) {
         std::cerr << report->p_value << "\t" << report->D_stat << "\t" << max << std::endl;
     }
