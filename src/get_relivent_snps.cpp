@@ -233,7 +233,7 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
     for (i = 0; i < RESAMPLES ; ++i) { // do the resampling for the permutation
         std::random_shuffle(&B[0],&B[max]);
         D_loop = gammitic_disequalibrium(A,B,max);
-        if (abs(D_loop) > abs(report->D_stat)){
+        if (abs(D_loop) >= abs(report->D_stat)){
             p_num++;
         }
         if(logging){
