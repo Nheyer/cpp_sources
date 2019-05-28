@@ -234,13 +234,13 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
         std::random_shuffle(&B[0],&B[max]);
         D_loop = gammitic_disequalibrium(A,B,max);
         if (abs(D_loop) >= abs(report->D_stat)){
-            p_num++;
+            p_num += 1.0;
         }
         if(logging){
             perm_log << D_loop << std::endl;
         }
     }
-    report->p_value = (float) (p_num / (double) RESAMPLES);
+    report->p_value = ((double) p_num / ((double) RESAMPLES));
     if((ARGS.debug_lvl > 0) || !(logging)) {
         std::cerr << report->p_value << "\t" << report->D_stat << "\t" << max << std::endl;
     }
@@ -313,7 +313,7 @@ int  get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha
     srand(time_t(NULL));
     boot_strap(A, B, num, * alpha , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
     permutation_test(A, B, num , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
-    DATA[index_to_fill].reject = (DATA[index_to_fill].p_value < *alpha);
+    DATA[index_to_fill].reject = (DATA[index_to_fill].p_value < * alpha);
     DATA[index_to_fill].state = "done";
     return 0;
 }
