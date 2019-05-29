@@ -185,7 +185,6 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
     return 0;
 }
 
-
 void cleaning_func(int arr1[MAXARR], int arr2[MAXARR], int insamp, bool * clean_arr1, bool * clean_arr2, int * out_n){
     int j = 0;
     for (int i = 0; i < insamp ; ++i) {
@@ -236,11 +235,11 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
     for (i = 0; i < RESAMPLES ; ++i) { // do the resampling for the permutation
         std::random_shuffle(&B[0],&B[max]);
         D_loop = gammitic_disequalibrium(A,B,max);
-        if (abs(D_loop) >= abs(report->D_stat)){
+        if ((std::abs(D_loop) >= std::abs(report->D_stat))){
             p_num += 1.0;
         }
         if(logging){
-            perm_log << D_loop << std::endl;
+            perm_log << D_loop << "," << (std::abs(D_loop) >= std::abs(report->D_stat))<< std::endl;
         }
     }
     report->p_value = ((double) p_num / ((double) RESAMPLES));
@@ -298,7 +297,7 @@ int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string
     return 0;
 }
 
-int  get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha, std::string path_to_log, int index_to_fill){
+int get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha, std::string path_to_log, int index_to_fill){
     bool A[MAXARR] = {};
     bool B[MAXARR] = {};
     int num = 0;
@@ -333,6 +332,7 @@ void *child_ps(void* in_vals) {     // (int Alpha[MAXARR], int Beta[MAXARR], int
     get_stats(vals_cast->A,vals_cast->B,vals_cast->num,&(vals_cast->arg.alpha),vals_cast->arg.log_path,vals_cast->data_index);
     pthread_exit(NULL);
 }
+
 int main(int argc, char ** argv){
     // declare variables
     htsFile *       input_vcf = NULL ; // can also be an indexed bcf
