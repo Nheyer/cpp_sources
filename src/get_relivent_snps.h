@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <pthread.h>
 #include <zconf.h>
+#include <cmath>
 
 
 //---structures---//
