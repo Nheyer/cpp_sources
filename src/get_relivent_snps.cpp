@@ -245,7 +245,7 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
     }
     report->p_value = ((double) p_num / ((double) RESAMPLES));
 #if DBUG_V
-    if(ARGS > 1){
+    if(ARGS.debug_lvl > 1){
         std::cerr << (double) p_num << "/"
                   << (double) RESAMPLES << "==>"
                   << report->p_value << "\n";
