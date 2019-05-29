@@ -17,6 +17,7 @@ struct out_data{
     float       UB      = 0.0;
     float       p_value = 0.0;
     bool        reject  = false;
+    double      adj_alpha = 0.0;
     std::string state   = "";
     pthread_t   ps;
     int         ptid    = -1;

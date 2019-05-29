@@ -53,6 +53,7 @@ int Bonferroni(int m, float alpha){
     for (int i = 0; i < m; ++i) {
         if (DATA[i].names != "self"){
             DATA[i].reject = (DATA[i].p_value < cor_alpha);
+            DATA[i].adj_alpha = (double) cor_alpha;
         }
     }
     return 0;
@@ -80,8 +81,10 @@ int Holm_Bonferroni(int m , float alpha){
         DATA[j] = temp_hold[Pval_Index[j].second];
         if (k == 0){
             DATA[j].reject = (DATA[j].p_value < (alpha)/(m + 1 - j));
+            DATA[j].adj_alpha = (alpha)/(m + 1 - j);
         }else if(k == 1 && j > 0){
             DATA[j].reject = (DATA[j].p_value < (alpha)/(m - j));
+            DATA[j].adj_alpha = (alpha)/(m - j);
         }
     }
     return rt_val;
@@ -204,13 +207,13 @@ float gammitic_disequalibrium(bool gene_A[MAXARR],  bool gene_B[MAXARR], int sam
     // calculate nums of each
     for (int i = 0; i < samples; ++i) {
         if(gene_A[i]){
-            n_A++;
+            n_A += 1.0;
             if(gene_B[i]){
-                n_B++;
-                n_AB++;
+                n_B  += 1.0;
+                n_AB += 1.0;
             }
         } else if(gene_B[i]){
-            n_B++;
+            n_B += 1.0;
         }
     }
     p_A  = (n_A  / n_all);
@@ -241,6 +244,13 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
         }
     }
     report->p_value = ((double) p_num / ((double) RESAMPLES));
+#if DBUG_V
+    if(ARGS > 1){
+        std::cerr << (double) p_num << "/"
+                  << (double) RESAMPLES << "==>"
+                  << report->p_value << "\n";
+    } else
+#endif
     if((ARGS.debug_lvl > 0) || !(logging)) {
         std::cerr << report->p_value << "\t" << report->D_stat << "\t" << max << std::endl;
     }

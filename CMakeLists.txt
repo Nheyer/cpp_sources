@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10.0)
 PROJECT(MAIN)
 SET(CMAKE_SHARED_LINKER_FLAGS  -lz -lm -lbz2 -llzma)
 
