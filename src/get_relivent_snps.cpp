@@ -63,26 +63,15 @@ int Holm_Bonferroni(int m , float alpha){
     std::vector < std::pair <float , int > > Pval_Index;
     temp_hold.resize(m);
     Pval_Index.resize(m);
-    int k = 0 , true_m, rt_val = 0;
+    int true_m, rt_val = 0;
     for(int i = 0; i < m; i++){
         Pval_Index[i] = (std::make_pair(DATA[i].p_value,i));
         temp_hold[i] = DATA[i];
     }
     std::sort(Pval_Index.begin(),Pval_Index.end());
-    if((temp_hold[Pval_Index[0].second].names !="self")){
-        std::cerr << "Somthing funky happened, the lowest p value is not the comparison ageist itself...\n"
-                  << "going to include all \"comparisons\" including potentially self\n";
-        rt_val = -1;
-    } else {
-        k = 1; //skip index 0
-    }
     for (int j = 0; j < m ; ++j) {
         DATA[j] = temp_hold[Pval_Index[j].second];
-        if (k == 0){
-            DATA[j].reject = (DATA[j].p_value < (alpha)/(m + 1 - j));
-        }else if(k == 1 && j > 0){
-            DATA[j].reject = (DATA[j].p_value < (alpha)/(m - j));
-        }
+        DATA[j].reject = (DATA[j].p_value < (alpha)/(m - j));
     }
     return rt_val;
 }
@@ -323,6 +312,27 @@ void *child_ps(void* in_vals) {     // (int Alpha[MAXARR], int Beta[MAXARR], int
     get_stats(vals_cast->A,vals_cast->B,vals_cast->num,&(vals_cast->arg.alpha),vals_cast->arg.log_path,vals_cast->data_index);
     pthread_exit(NULL);
 }
+int get_tsv_arr_idx(int target_idx, int ps_last, int num_samps, int& last_idx_given){
+    if(!ARGS.pairwise_targets){
+        if(ps_last < target_idx){
+            return ps_last;
+        } else if( ps_last >= target_idx){
+            return ps_last + 1;
+        }
+    }else if(ARGS.pairwise_targets){
+        last_idx_given++; //increment before checking if the position is a valid one to run
+        if(last_idx_given < num_samps){ // if we are in the middle of a path up give next index
+            return last_idx_given; // we incremented on the last line, so we do not need to here.
+        } else if (last_idx_given == num_samps ){
+            last_idx_given = target_idx + 1; // if that passed we just chainged targets, so... we want the idx after
+            return last_idx_given;
+        } else {
+            std::cerr << "We had some error, and were trying to get a strange index...\n";
+            std::exit(-1); // if we get here something has gone very wrong....
+        }
+    }
+}
+
 int main(int argc, char ** argv){
     // declare variables
     htsFile *       input_vcf = NULL ; // can also be an indexed bcf
@@ -334,7 +344,7 @@ int main(int argc, char ** argv){
     int  *          tsv_arr_p = &tsv_array[0][0]; // pointer to a MAXARR by MAXARR array of ints
     int  *          dementions_p[2] = {&dementions[0],&dementions[1]};
     char * *        head_line[MAXARR] = {};
-    int             grid_flag = -1, data_used = 0 , ps_running = 0 ;
+    int             grid_flag = -1, data_used = 0 , ps_running = 0, tsv_idx = 0 ;
     int             ps_done = 0, ps_last_started = 0 , target_index = 0 , test_errors = 0;
     unsigned int    ps_wait = WAIT_PS;
     bool            first_run = true;
@@ -361,7 +371,7 @@ int main(int argc, char ** argv){
     } else if (grid_flag == -2){
         std::cerr << "Couldn't unpack the sample lines\n";
     } else if (grid_flag == -3){
-        std::cerr << "Failed to get variant depth for one of the samples\n";
+        std::cerr << "Failed to get/calculate variant depth for one of the samples\n";
     } else if (grid_flag == -4){
         std::cerr << "Failed to get reference depth for one of the samples\n";
     }
@@ -370,14 +380,12 @@ int main(int argc, char ** argv){
     bcf_hdr_destroy(input_vcf_hdr);
     bcf_close(input_vcf);
 
-    data_used = dementions[1];
+    data_used = dementions[1] - 1; // -1 to remove self comparison
     do{
+        tsv_idx = get_tsv_arr_idx(target_index,ps_last_started,dementions[0],tsv_idx);
         if(!(first_run)) {
             for (int i = ((ps_last_started - ps_running)); i < ps_last_started; ++i) {
-                if (DATA[i].state == "done") {
-                    if(!(DATA[i].names == "self")){ // if it is not the one that didn't really run, we need to free some space
-                        DATA[i].names = std::to_string(chr_positions[target_index])+"-vs-"+ std::to_string(chr_positions[i]);
-                    }
+                if (DATA[i].state == "done"){
                     if (ARGS.debug_lvl > 0) { std::cerr << DATA[i].names << " is DONE!!!" << std::endl; }
                     ps_wait = WAIT_PS;
                     ps_done++;
@@ -422,27 +430,19 @@ int main(int argc, char ** argv){
         } else if (ps_done == data_used && ps_running > 0){
             std::cerr <<  "all processes done, but still have threads running....\n";
         }
-        if(ps_running < ARGS.threads && ps_last_started < data_used && ps_last_started != target_index){
-            if(ARGS.debug_lvl > 0){std::cerr << "Kicking off \t" << std::to_string(chr_positions[target_index]) + "-vs-" + std::to_string(chr_positions[ps_last_started])<< std::endl;}
+        if(ps_running < ARGS.threads && ps_last_started < data_used){
+            if(ARGS.debug_lvl > 0){std::cerr << "Kicking off \t" << std::to_string(chr_positions[target_index]) + "-vs-"
+            + std::to_string(chr_positions[tsv_idx])<< std::endl;}
             DATA[ps_last_started].state = "running";
             DATA[ps_last_started].ptid = ps_last_started;
-            DATA[ps_last_started].names = std::to_string(chr_positions[target_index]) + "-vs-" + std::to_string(chr_positions[ps_last_started]);
+            DATA[ps_last_started].names = std::to_string(chr_positions[target_index]) + "-vs-"
+                    + std::to_string(chr_positions[tsv_idx]);
             // start the child process and add one to the number of prosesses running.
-            PS_Data in_vals = ps_fill(tsv_array[target_index], tsv_array[ps_last_started], dementions[0],ps_last_started);
+            PS_Data in_vals = ps_fill(tsv_array[target_index], tsv_array[tsv_idx], dementions[0],ps_last_started);
             if (pthread_create(&(DATA[ps_last_started].ps), nullptr, child_ps,(void *) &in_vals) == 0){
                 std::cout << "launched thread with tid:\t" << DATA[ps_last_started].ptid << std::endl;
             };
             ps_wait = WAIT_PS;
-            ps_last_started++;
-            ps_running++;
-        } else if (ps_last_started == target_index){
-            if(ARGS.debug_lvl > 0){std::cerr << "Don't run vs yourself....\n";}
-            DATA[ps_last_started].names = "self";
-            DATA[ps_last_started].state = "done";
-            DATA[ps_last_started].p_value = 0.0;
-            DATA[ps_last_started].D_stat = 0;
-            DATA[ps_last_started].UB = 0.0;
-            DATA[ps_last_started].LB = 0.0;
             ps_last_started++;
             ps_running++;
         }

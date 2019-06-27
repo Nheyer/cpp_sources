@@ -20,6 +20,7 @@ struct user_arguments{
     float        alpha           = 0.05    ;
     int          FWEC            = 0       ;
     int          debug_lvl       = 0       ;
+    bool         pairwise_targets= false   ;
 };
 
 user_arguments ARGS;
