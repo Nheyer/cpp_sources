@@ -61,6 +61,7 @@ void parse(int Arglength, char ** ArgComands ){
         else if (arg_i == "-h") {print_help();}
         else {std::cerr << "Unexpected Input:\t" << arg_i << std::endl; i++;}
     }
+    std::cerr  << "This will utilize " << ARGS.threads << "threads\n";
     if(!need_to_set_start_end){
         return;
     }else if(ARGS.target < 0 || range < 0 || ARGS.contig == ""){

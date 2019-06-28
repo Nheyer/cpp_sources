@@ -9,7 +9,7 @@
 #define DBUG_VV         false
 #define MAXARR          256
 #define RESAMPLES       10000000
-#define WAIT_PS         5
+#define WAIT_PS         1
 // define BONFERRONI      0
 // define HOLM_BONFERRONI 1
 

@@ -87,7 +87,8 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
     // initialise the data
     int i = 0 , j = 0 , k = 0 , l = 0;
     int cur_conting_pos = 0 , num_not_null = 0;
-    int NumSamples = 1 ;
+    int NumSamples = 1;
+    int MAXARR_VALUE = MAXARR; // htslib needs a pointer to this number for some resion
     int var_type[MAXARR] = {} , ref_type[MAXARR] = {}; // make some space for fmt tag values
     int * var_p = &var_type[0]; // pointer to the first pos of the var_type array
     int * ref_p = &ref_type[0]; // pointer to the first pos of the ref_type array
@@ -122,17 +123,31 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
             } else if (cur_conting_pos <= end) {
                 if (ARGS.debug_lvl > 0) { std::cerr << cur_conting_pos << std::endl; } // testing
                 if (bcf_unpack(line,BCF_UN_IND) != 0) { return -2;}// Unpack the data for the individual samples on the lines we care about
-
-                if (get_int_type_fmt(line,ARGS.var_fmt_flag,hdr->id[BCF_DT_ID],NumSamples, var_p ) != 0 ){ return -3;};
-                if (get_int_type_fmt(line,ARGS.ref_fmt_flag,hdr->id[BCF_DT_ID],NumSamples, ref_p ) != 0 ){ return -4;};
+		int var_err_code = bcf_get_format_int32(hdr,line,ARGS.var_fmt_flag,&var_p,&NumSamples);
+                if (var_err_code < 0 ){
+                    std::cerr << "When attempting to get the variant info bcf_get_format_int32 yealded error:\t" << var_err_code << std::endl; 
+                    return -3;
+                };
+                int ref_err_code = bcf_get_format_int32(hdr,line,ARGS.ref_fmt_flag,&ref_p,&NumSamples);
+                if (ref_err_code < 0 ){
+                    std::cerr << "When attempting to get the refference info bcf_get_format_int32 yealded error:\t" << ref_err_code << std::endl;
+                    return -4;
+                };
+                if(ref_err_code != var_err_code){
+                std::cout << "Obtained differing lengths of array for varient and refference depths, is the format line different on one of them?\n";
+                return -3;
+                }
+                
                 num_not_null = 0; // starting a new line, so reset this;
                 snp = false;
                 for (int m = 0; m < NumSamples; m++) {
+                    if (var_type[m] == -2147483648){var_type[m] = 0;};
+                    if (ref_type[m] == -2147483648){ref_type[m] = 0;}; // if ether of the values are null set then to 0 
                     if(var_type[m] < ref_type[m]){
                         store = 1;
                         num_not_null++;
                     } // set to 1 b/c 0 is null, and this means it is more reference
-                    else if (var_type[m] == 0 && ref_type[m] == 0){store = 0;} // they are both 0 so... we really have no data, set it to null
+                    else if (var_type[m] == 0 && ref_type[m] == 0){store = 0;} // we saw nothing sooooo 
                     else {
                         store = 2;
                         num_not_null++;
@@ -146,9 +161,7 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
                 }
                 // we only want lines with at least one snp
                 if((num_not_null >= ARGS.min_not_null && snp) or (cur_conting_pos == ARGS.target )) {
-#if DBUG_V
-                    if(ARGS.debug_lvl > 1){std::cerr << "adding position " << cur_conting_pos << " and starting next row!\n";}
-#endif
+                    if(ARGS.debug_lvl > 0){std::cerr << "Adding position " << cur_conting_pos << " and starting next row!\n";}
                     poss[j] = cur_conting_pos;
                     j++;
                 }
@@ -319,7 +332,7 @@ void *child_ps(void* in_vals) {     // (int Alpha[MAXARR], int Beta[MAXARR], int
     get_stats(vals_cast->A,vals_cast->B,vals_cast->num,&(vals_cast->arg.alpha),vals_cast->arg.log_path,vals_cast->data_index);
     pthread_exit(NULL);
 }
-int get_tsv_arr_idx(int target_idx, int ps_last, int num_samps, int& last_idx_given){
+int get_tsv_arr_idx(int& target_idx, int ps_last, int num_samps, int& last_idx_given){
     if(!ARGS.pairwise_targets){
         if(ps_last < target_idx){
             return ps_last;
@@ -331,6 +344,7 @@ int get_tsv_arr_idx(int target_idx, int ps_last, int num_samps, int& last_idx_gi
         if(last_idx_given < num_samps){ // if we are in the middle of a path up give next index
             return last_idx_given; // we incremented on the last line, so we do not need to here.
         } else if (last_idx_given == num_samps ){
+            target_idx++; //we also need to increment
             last_idx_given = target_idx + 1; // if that passed we just chainged targets, so... we want the idx after
             return last_idx_given;
         } else {
@@ -339,7 +353,13 @@ int get_tsv_arr_idx(int target_idx, int ps_last, int num_samps, int& last_idx_gi
         }
     }
 }
-
+unsigned long long int factorial(int x){
+    unsigned long long int prod = 1;
+    for(int i = 1; i <=x ; i++){
+    prod *= i;
+    }
+    return prod;
+}
 int main(int argc, char ** argv){
     // declare variables
     htsFile *       input_vcf = NULL ; // can also be an indexed bcf
@@ -388,8 +408,20 @@ int main(int argc, char ** argv){
     bcf_close(input_vcf);
 
     data_used = dementions[1] - 1; // -1 to remove self comparison
+    if(ARGS.pairwise_targets){
+        const unsigned long long int numerator = factorial(dementions[1]);
+        const unsigned long long int denom = (factorial(dementions[1] - 2) * 2);
+          
+        data_used = numerator/denom; // if it is parwise we are running n choose 2 times
+        if(ARGS.debug_lvl > 0){
+            std::cerr << "Data Used : \t" << data_used << std::endl
+                      << "numerator : \t" << numerator << std::endl
+                      << "denom : \t"     << denom     << std::endl;
+        }
+       
+    }
     do{
-        tsv_idx = get_tsv_arr_idx(target_index,ps_last_started,dementions[0],tsv_idx);
+        tsv_idx = get_tsv_arr_idx(target_index,ps_last_started,dementions[1],tsv_idx);
         if(!(first_run)) {
             for (int i = ((ps_last_started - ps_running)); i < ps_last_started; ++i) {
                 if (DATA[i].state == "done"){

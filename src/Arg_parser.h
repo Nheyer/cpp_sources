@@ -14,8 +14,8 @@ struct user_arguments{
     int          threads         = 5       ;
     int          min_not_null    = 10      ;
     std::string  outpath         = "./outs/"      ;
-    std::string  ref_fmt_flag    = "RO"    ;
-    std::string  var_fmt_flag    = "AO"    ;
+    const char *  ref_fmt_flag    = "RO"    ;
+    const char *  var_fmt_flag    = "AO"    ;
     std::string  log_path        = "./logs/"    ;
     float        alpha           = 0.05    ;
     int          FWEC            = 0       ;
