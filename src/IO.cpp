@@ -51,7 +51,7 @@ int write_vals(char* samp[MAXARR], int positions[MAXARR], int data[MAXARR][MAXAR
 }
 int write_values(out_data data[MAXARR], int max, std::string & out_path){
     std::ofstream pairwise_data;
-    pairwise_data.open("./outs/" + out_path + ".summary.tsv");
+    pairwise_data.open( out_path + ".summary.tsv");
     pairwise_data << "Pairing\t Lower_Bound\t Upper_Bound\t "
                   << "Sample_Disequilibrium\t p-value\t "
                   << "alpa-adj\t Decision";
