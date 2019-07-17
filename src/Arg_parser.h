@@ -13,10 +13,10 @@ struct user_arguments{
     int          target          = -1      ;
     int          threads         = 5       ;
     int          min_not_null    = 10      ;
-    std::string  outpath         = "./outs/"      ;
+    std::string  outpath         = "./"      ;
     const char *  ref_fmt_flag    = "RO"    ;
     const char *  var_fmt_flag    = "AO"    ;
-    std::string  log_path        = "./logs/"    ;
+    std::string  log_path        = "./"    ;
     float        alpha           = 0.05    ;
     int          FWEC            = 0       ;
     int          debug_lvl       = 0       ;
