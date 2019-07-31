@@ -228,9 +228,13 @@ int permutation_test(bool A[MAXARR], bool B[MAXARR], int max , std::string path_
     float D_loop = 0.0;
     std::ofstream perm_log;
     bool logging = false;
-    if(path_to_log != ""){
-        perm_log.open( path_to_log + ".permutation.csv");
+    if(ARGS.log_path != "false"){
+        path_to_log = ARGS.log_path + "/" + path_to_log + ".permutation.csv";
+        perm_log.open(path_to_log.c_str());
         logging = true;
+        if (ARGS.debug_lvl > 0 ){
+            std::cerr << "logging for comparison in file \"" << path_to_log << "\"\n";
+        }
     }
     for (i = 0; i < RESAMPLES ; ++i) { // do the resampling for the permutation
         std::random_shuffle(&B[0],&B[max]);
@@ -267,9 +271,13 @@ int boot_strap(bool A[MAXARR], bool B[MAXARR], int max, float alpha, std::string
     bool logging = false;
     float lower = 0.0 , upper = 0.0;
     std::ofstream boot_log ;
-    if (path_to_log != ""){ // see if we want to log the alt distrabution
-        boot_log.open(path_to_log + ".bootstrap.csv");
+    if (ARGS.log_path != "false"){ // see if we want to log the alt distrabution
+        path_to_log = ARGS.log_path + path_to_log + ".bootstrap.csv";
+        boot_log.open(path_to_log.c_str());
         logging = true;
+        if (ARGS.debug_lvl > 0 ){
+            std::cerr << "logging for comparison in file \"" << path_to_log << "\"\n";
+        }
     }
     for (int i = 0; i < RESAMPLES ; ++i) {
         for (int j = 0; j < max; ++j) {     // fill the loop arrays with randome tuples from A and B
@@ -320,8 +328,8 @@ int get_stats(int a_raw[MAXARR], int b_raw[MAXARR], int init_num, float * alpha,
     DATA[index_to_fill].D_stat = gammitic_disequalibrium(A,B,num);
     print_table(A,B,num); // prints grapphical table of data
     srand(time_t(NULL));
-    boot_strap(A, B, num, * alpha , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
-    permutation_test(A, B, num , path_to_log  + DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
+    boot_strap(A, B, num, * alpha , DATA[index_to_fill].names, &DATA[index_to_fill]); // do bootstrap
+    permutation_test(A, B, num , DATA[index_to_fill].names, &DATA[index_to_fill]); // do permutation test
     DATA[index_to_fill].reject = (DATA[index_to_fill].p_value < * alpha);
     DATA[index_to_fill].state = "done";
     return 0;
@@ -488,7 +496,7 @@ int main(int argc, char ** argv){
     } while (sleep(ps_wait) == 0);
     ///todo report errors
     test_errors = do_correction(ARGS.FWEC,data_used,ARGS.alpha);
-    write_values(&DATA[0],data_used,ARGS.outpath);
+    write_values(&DATA[0],data_used);
 
     return 0;
 }
