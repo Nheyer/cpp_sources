@@ -96,6 +96,7 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
     int start = ARGS.StartptEndpt[0];
     bool read_some = false, snp = false;
     unsigned short int store = 0;
+    std::vector<std::string> samp_names ;
 
     // make some space in the stack
     bcf1_t * line = bcf_init();
@@ -103,15 +104,21 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
     // Get the number of samples in the multisample VCF.
     NumSamples = bcf_hdr_nsamples(hdr);
     if(ARGS.debug_lvl > 0){std::cout << "Number of samples found:\t" << NumSamples << std::endl;}
+    if(not ARGS.regx_match.empty()){ // if we want to use names alloc storage here
+        samp_names.resize( (unsigned) NumSamples); // should always be positive
+    }
     while (i < NumSamples && i < MAXARR){   // make sure we dont over flow anything but loop through all
         header[i] = &hdr->samples[i]; // rip the sample names from the header
         if(ARGS.debug_lvl > 0){std::cerr << *(header[i]) << "\t" << i << std::endl;}
+        if (not ARGS.regx_match.empty()){ // if this is true we need to make a fake position using samp names & rules store names
+            samp_names[i] = hdr->samples[i];
+        }
         i++;
     }
     // see if we filled the samples or the numver of strings we have
-    if ( i == 255){
-        std::cerr << "Filled the header line, were there more then 256?... If so split up the samples\n";
-        NumSamples = 256;
+    if ( i == MAXARR - 1 ){
+        std::cerr << "Filled the header line, were there more then " << MAXARR << "?... If so split up the samples\n";
+        NumSamples = MAXARR;
     }
 
     //loop through all positions in the VCF
@@ -123,26 +130,26 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
             } else if (cur_conting_pos <= end) {
                 if (ARGS.debug_lvl > 0) { std::cerr << cur_conting_pos << std::endl; } // testing
                 if (bcf_unpack(line,BCF_UN_IND) != 0) { return -2;}// Unpack the data for the individual samples on the lines we care about
-		int var_err_code = bcf_get_format_int32(hdr,line,ARGS.var_fmt_flag,&var_p,&NumSamples);
+		        int var_err_code = bcf_get_format_int32(hdr,line,ARGS.var_fmt_flag,&var_p,&NumSamples);
                 if (var_err_code < 0 ){
-                    std::cerr << "When attempting to get the variant info bcf_get_format_int32 yealded error:\t" << var_err_code << std::endl; 
+                    std::cerr << "When attempting to get the variant info bcf_get_format_int32 threw error:\t" << var_err_code << std::endl;
                     return -3;
                 };
                 int ref_err_code = bcf_get_format_int32(hdr,line,ARGS.ref_fmt_flag,&ref_p,&NumSamples);
                 if (ref_err_code < 0 ){
-                    std::cerr << "When attempting to get the refference info bcf_get_format_int32 yealded error:\t" << ref_err_code << std::endl;
+                    std::cerr << "When attempting to get the reference info bcf_get_format_int32 threw error:\t" << ref_err_code << std::endl;
                     return -4;
                 };
                 if(ref_err_code != var_err_code){
-                std::cout << "Obtained differing lengths of array for varient and refference depths, is the format line different on one of them?\n";
+                std::cout << "Obtained differing lengths of array for variant and reference depths, is the format line different on one of them?\n";
                 return -3;
                 }
                 
-                num_not_null = 0; // starting a new line, so reset this;
+                num_not_null = 0; // starting a new line, so reset this
                 snp = false;
                 for (int m = 0; m < NumSamples; m++) {
                     if (var_type[m] == -2147483648){var_type[m] = 0;};
-                    if (ref_type[m] == -2147483648){ref_type[m] = 0;}; // if ether of the values are null set then to 0 
+                    if (ref_type[m] == -2147483648){ref_type[m] = 0;}; // if ether of the values are null set them to 0
                     if(var_type[m] < ref_type[m]){
                         store = 1;
                         num_not_null++;
@@ -172,12 +179,20 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
                 break;
             }
             if (j == MAXARR - 1) { // if the array if full break, and tell user
-                std::cerr << "256 variants found, breaking!\n";
+                std::cerr <<  MAXARR << " variants found, breaking!\n";
+                if(not ARGS.regx_match.empty()){ // if user wants to use names, kill everything and yell
+                    std::cerr << "WE WONT HAVE SPACE TO ADD names as alleles, SPLIT THIS UP !!\n";
+                    exit(-1);
+                }
                 break;
             }
         } else if (read_some){
             std::cerr << "Hit the next contig before user endpoint...\n Breaking here to not add incorrect values\n" << std::endl;
             break;
+        }
+        if( not ARGS.regx_match.empty()){
+
+
         }
     }
     * dem[0] = NumSamples;
