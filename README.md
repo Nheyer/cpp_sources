@@ -1,5 +1,5 @@
 # linkage_calc
-CPP source files used working with the NOTCH2NL region and HTSLIB
+Source files to create linkage calc, a program that determines if haploid samples in a multi-sample vcf have alleles that are linked, by using a gamitic linkage calculation then permitation tests. Developed initioly for use with the NOTCH2NL genes, but is fully generalized.  
 
 Installation:
 make sure you have the required dependincies for htslib (pthread lzip)
