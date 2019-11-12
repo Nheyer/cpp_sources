@@ -201,7 +201,7 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
                 if (ARGS.debug_lvl > 0 ) {std::cerr << "It was found !!" << std::endl; }
             } else {
                 arr[m + MAXARR * j] = 2; // no match is "variant"
-                if (ARGS.debug_lvl > 0 ) {std::cerr << "It was found !!" << std::endl; }
+                if (ARGS.debug_lvl > 0 ) {std::cerr << "NOT FOUND!" << std::endl; }
             }
         }
     j++;
