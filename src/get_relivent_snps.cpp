@@ -195,10 +195,13 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
         std::regex expresion = std::regex(ARGS.regx_match);
         poss[j] = ARGS.target;
         for(int m = 0 ; m < samp_names.size(); m++){
+            if (ARGS.debug_lvl > 0 ) {std::cerr << "Looking for " << ARGS.regx_match << " in :" << samp_names[m] << std::endl;}
             if (std::regex_match(samp_names[m], expresion)){
                 arr[m + MAXARR * j] = 1; // match is "reference"
+                if (ARGS.debug_lvl > 0 ) {std::cerr << "It was found !!" << std::endl; }
             } else {
                 arr[m + MAXARR * j] = 2; // no match is "variant"
+                if (ARGS.debug_lvl > 0 ) {std::cerr << "It was found !!" << std::endl; }
             }
         }
     j++;
@@ -429,7 +432,7 @@ int main(int argc, char ** argv){
     } else if (grid_flag == -2){
         std::cerr << "Couldn't unpack the sample lines\n";
     } else if (grid_flag == -3){
-        std::cerr << "Failed to get/calculate variant depth for one of the samples\n";
+        std::cerr << "Failed to get/calculate variant depth for one of the samples\n This is likely due to a missing value in the vcf!!\n";
     } else if (grid_flag == -4){
         std::cerr << "Failed to get reference depth for one of the samples\n";
     }
