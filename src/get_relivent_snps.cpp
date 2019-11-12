@@ -170,7 +170,7 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
                 if((num_not_null >= ARGS.min_not_null && snp) or (cur_conting_pos == ARGS.target )) {
                     if(ARGS.debug_lvl > 0){std::cerr << "Adding position " << cur_conting_pos << " and starting next row!\n";}
                     poss[j] = cur_conting_pos;
-                    j++;
+                    j++;   // well, really what we do is not over writ this index on next loop
                 }
                 if(DBUG){std::cout << "\n";}
 
@@ -190,10 +190,18 @@ int mk_grid(htsFile * bcf, bcf_hdr_t * hdr, int * poss, int * arr, char ** heade
             std::cerr << "Hit the next contig before user endpoint...\n Breaking here to not add incorrect values\n" << std::endl;
             break;
         }
-        if( not ARGS.regx_match.empty()){
-
-
+    }
+    if( not ARGS.regx_match.empty()){
+        std::regex expresion = std::regex(ARGS.regx_match);
+        poss[j] = ARGS.target;
+        for(int m = 0 ; m < samp_names.size(); m++){
+            if (std::regex_match(samp_names[m], expresion)){
+                arr[m + MAXARR * j] = 1; // match is "reference"
+            } else {
+                arr[m + MAXARR * j] = 2; // no match is "variant"
+            }
         }
+    j++;
     }
     * dem[0] = NumSamples;
     * dem[1] = j;
