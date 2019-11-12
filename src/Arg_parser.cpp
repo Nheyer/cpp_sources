@@ -49,9 +49,9 @@ void parse(int Arglength, char ** ArgComands ){
             i += 3;
         }
         else if(arg_i == "-p"){
-            ARGS.regx_match = (std::string)ArgComands[i + 1];
+            ARGS.regx_match = ArgComands[i + 1];
             ARGS.target = -1;
-
+            i += 2;
         }
         else if (arg_i == "-r") {range             = std::stoi(ArgComands[i + 1])    ; i += 2;}
         else if (arg_i == "-@") {ARGS.threads      = std::stoi(ArgComands[i + 1])    ; i += 2;}
