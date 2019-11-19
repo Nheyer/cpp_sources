@@ -73,6 +73,7 @@ int Holm_Bonferroni(int m , float alpha){
     for (int j = 0; j < m ; ++j) {
         DATA[j] = temp_hold[Pval_Index[j].second];
         DATA[j].reject = (DATA[j].p_value < (alpha)/(m - j));
+        DATA[j].adj_alpha = (alpha)/(m - j);
     }
     return rt_val;
 }
