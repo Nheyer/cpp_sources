@@ -27,6 +27,7 @@
 #include <pthread.h>
 #include <zconf.h>
 #include <cmath>
+#include <regex>
 
 
 //---structures---//

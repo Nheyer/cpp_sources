@@ -16,8 +16,9 @@ void print_help(){
               << "  \t          \t between a range pairwise (dont use -t or -r)\n"
               << "----------Optional Flags----------\n\n"
               << "-n\t<INT>     \t Minimum number of none null values in non-target needed to test it \t default == 10\n"
+              << "-p\t<STR>     \t A regx string in quotes to make sample names target allele NOTE must be used with -A\n"
               << "-V\t<STR>     \t Format flag for total varent depth\t default == AO\n"
-              << "-R\t<STR>     \t Format flag for total refference depth\t default == RO\n"
+              << "-R\t<STR>     \t Format flag for total reference depth\t default == RO\n"
               << "-o\t<PATH>    \t Base file name, and path to output data table \t default == ./\n"
               << "-L\t<PATH>    \t Directory to place log files\t default == ./\n"
               << "-C\t<INT>     \t type of strong error wise correction to use HOLM_BONFERRONI = 1, default == BONFERRONI = 0 \n"
@@ -42,10 +43,15 @@ void parse(int Arglength, char ** ArgComands ){
         }
         else if (arg_i == "-A") {
             need_to_set_start_end = false;
-            ARGS.pairwise_targets = true;
+            ARGS.pairwise_targets = !ARGS.regx_match.empty(); // if we didn't already get -p we need to set this
             ARGS.StartptEndpt[0] = std::abs(std::stoi(ArgComands[i + 1]));
             ARGS.StartptEndpt[1] = std::abs(std::stoi(ArgComands[i + 2]));
             i += 3;
+        }
+        else if(arg_i == "-p"){
+            ARGS.regx_match = ArgComands[i + 1];
+            ARGS.target = -1;
+            i += 2;
         }
         else if (arg_i == "-r") {range             = std::stoi(ArgComands[i + 1])    ; i += 2;}
         else if (arg_i == "-@") {ARGS.threads      = std::stoi(ArgComands[i + 1])    ; i += 2;}
@@ -64,7 +70,7 @@ void parse(int Arglength, char ** ArgComands ){
     std::cerr  << "This will utilize " << ARGS.threads << "threads\n";
     if(!need_to_set_start_end){
         return;
-    }else if(ARGS.target < 0 || range < 0 || ARGS.contig == ""){
+    }else if(ARGS.target < -1 || range < 0 || ARGS.contig == ""){
         std::cerr << "Missing at least one of the required arguments:\n";
         print_help();
     } else if(middle < range){
