@@ -1,6 +1,3 @@
-//
-// Created by sheepless on 5/25/19.
-//
 
 #include "Arg_parser.h"
 
