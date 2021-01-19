@@ -1,8 +1,3 @@
-//
-// Created by sheepless on 5/25/19.
-//
-
-
 #include "IO.h"
 
 void print_table(bool gene_A[MAXARR], bool gene_B[MAXARR], int samples){
