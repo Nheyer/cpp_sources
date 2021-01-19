@@ -1,6 +1,4 @@
-//
-// Created by sheepless on 3/19/19.
-//
+
 #include "get_relivent_snps.h"
 #if DBUG_V
 void print_vec(bool v[], int len){
