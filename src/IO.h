@@ -1,6 +1,3 @@
-//
-// Created by sheepless on 5/25/19.
-//
 
 #ifndef MAIN_IO_H
 #define MAIN_IO_H
