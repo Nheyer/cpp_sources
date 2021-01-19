@@ -1,6 +1,4 @@
-//
-// Created by sheepless on 5/25/19.
-//
+
 
 #ifndef MAIN_ARG_PARSER_H
 #define MAIN_ARG_PARSER_H
